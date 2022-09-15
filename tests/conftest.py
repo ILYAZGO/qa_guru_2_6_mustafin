@@ -1,6 +1,8 @@
 import pytest
+from .packing import clear
 
-@pytest.fixture(scope='function', autouse=True)
-def files_into_zip():
+@pytest.fixture(scope='module', autouse=True)
+def teardown():
     pass
     yield
+    clear()

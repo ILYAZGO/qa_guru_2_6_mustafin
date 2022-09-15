@@ -1,7 +1,6 @@
-import pytest
 import zipfile,PyPDF2
+from openpyxl import load_workbook
 from .packing import packing
-
 
 def test_from_zip():
     packing()
@@ -30,6 +29,11 @@ def test_pdf():
 def test_xlsx():
     with zipfile.ZipFile('all.zip') as all:
         with all.open('База данных Жители Кременчуга и Кременчугского уезда.xlsx', mode='r') as file:
-            xlsx_data=str(file.read()).encode('utf-8')
-
-            #print(xlsx_data)
+            wb = load_workbook(file, read_only=True)
+            ws = wb.active
+            text = ''
+            for row in ws.iter_rows(min_row=ws.min_row,max_row=ws.max_row):
+                for cell in row:
+                    text += str(cell.value)+" "
+    assert text.find('Ячмяник') != -1
+    assert text.find('Кадыров') != 1
